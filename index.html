@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jeu radicalisation fr</title>
+  <style>
+    :root{
+      --bg:#0b0b0c;
+      --card:#f5f2ee;
+      --text:#1f2a37;
+      --muted:#6b7280;
+      --accent:#d97706;
+      --good:#16a34a;
+      --warn:#f59e0b;
+      --bad:#dc2626;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 520px at 50% 25%, rgba(255,255,255,.08), transparent 60%), var(--bg);
+      color:white;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:26px 14px;
+      gap:14px;
+    }
+    header{
+      width:min(1100px, 100%);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:800; letter-spacing:.2px;
+    }
+    .brand span{ color: var(--accent); }
+    .pill{
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      color: rgba(255,255,255,.9);
+      display:flex; gap:10px; align-items:center;
+      white-space:nowrap;
+    }
+    .progress-wrap{
+      width:min(1100px,100%);
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-top:2px;
+    }
+    .progress{
+      flex:1;
+      height:10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.12);
+      overflow:hidden;
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, var(--accent), #f59e0b);
+      border-radius:999px;
+      transition:width .35s ease;
+    }
+    main{
+      width:min(1100px,100%);
+      display:grid;
+      gap:14px;
+      justify-items:center;
+    }
+    .card{
+      width:100%;
+      background: var(--card);
+      color: var(--text);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:26px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute; inset:-90px -90px auto auto;
+      width:240px; height:240px;
+      background: radial-gradient(circle, rgba(217,119,6,.22), transparent 62%);
+      transform: rotate(18deg);
+      pointer-events:none;
+    }
+    .kicker{
+      display:flex; align-items:center; gap:10px;
+      margin:0 0 10px;
+      color:#374151;
+      font-size:13px;
+      font-weight:700;
+      opacity:.85;
+    }
+    .title{
+      font-size:28px;
+      font-weight:900;
+      margin:0 0 8px;
+      letter-spacing:-.2px;
+    }
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      line-height:1.55;
+      max-width: 78ch;
+      font-size:16px;
+      white-space:pre-line;
+    }
+    .desc{
+      margin:10px 0 0;
+      color:#374151;
+      line-height:1.5;
+      font-size:14px;
+      opacity:.95;
+      display:none;
+      white-space:pre-line;
+    }
+    .feedback{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.08);
+      background: rgba(255,255,255,.55);
+      display:none;
+      line-height:1.45;
+      white-space:pre-line;
+    }
+    .feedback.good{ border-color: rgba(22,163,74,.25); }
+    .feedback.warn{ border-color: rgba(245,158,11,.25); }
+    .feedback.bad{ border-color: rgba(220,38,38,.25); }
+    .choices{
+      width:100%;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+    }
+    @media (max-width: 820px){
+      .choices{ grid-template-columns: 1fr; }
+      .title{ font-size:24px; }
+    }
+    .btn{
+      width:100%;
+      border:0;
+      border-radius:16px;
+      padding:16px 16px;
+      cursor:pointer;
+      font-size:15px;
+      font-weight:750;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      background:white;
+      box-shadow: 0 10px 30px rgba(0,0,0,.14);
+      transition: transform .08s ease, box-shadow .2s ease;
+      text-align:left;
+    }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 14px 40px rgba(0,0,0,.18); }
+    .badge{
+      width:34px; height:34px;
+      border-radius:999px;
+      display:grid; place-items:center;
+      background: rgba(217,119,6,.15);
+      color: var(--accent);
+      font-weight:900;
+      flex:none;
+    }
+    .footerline{
+      width:100%;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-top:6px;
+      color: rgba(255,255,255,.78);
+      font-size:13px;
+    }
+    .linkbtn{
+      background:none; border:none; color:#fbbf24;
+      cursor:pointer; text-decoration:underline;
+      font-size:13px;
+      padding:6px 0;
+    }
+    .small{ opacity:.9; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="brand"><span>Jeu radicalisation fr</span></div>
+    <div class="pill">
+      <span id="stepPill">Étape 1/10</span>
+      <span>•</span>
+      <span id="scorePill">Vigilance : 0</span>
+    </div>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div class="pill" id="nodePill">Scène : start</div>
+  </div>
+
+  <main>
+    <section class="card" aria-live="polite">
+      <h1 class="title" id="title">…</h1>
+      <p class="subtitle" id="text">…</p>
+      <p class="desc" id="desc"></p>
+      <div class="feedback" id="feedback"></div>
+    </section>
+
+    <section class="choices" id="choices"></section>
+
+    <div class="footerline">
+      <span class="small" id="hint">Choisis une option pour continuer.</span>
+      <div>
+        <button class="linkbtn" id="backBtn">Retour</button>
+        <span style="opacity:.6"> • </span>
+        <button class="linkbtn" id="restartBtn">Recommencer</button>
+      </div>
+    </div>
+  </main>
+
+<script>
+/*
+  CHANGEMENTS PRINCIPAUX :
+  - correction du doublon talk_parents_q (bug)
+  - TOTAL_STEPS aligné sur les scènes
+  - plus de diversité : flatterie / complot / colère / "cause"
+  - plus de réalisme : au début c'est gentil, ensuite ça glisse
+  - plus de fins : bonne / neutre / rumeur / emprise / sortie tardive
+*/
+
+const TOTAL_STEPS = 10;
+
+const scenes = {
+  start: {
+    step: 1,
+    title: "Début",
+    text:
+      "Quelqu’un t’ajoute sur Snap.\n" +
+      "La personne te dit : « Salut, j’ai vu tes stories. On dirait que ça ne va pas trop.. Je peux t’aider. »\n\n" +
+      "Acceptes-tu de discuter ?",
+    choices: [
+      { label: "Oui, je réponds", next: "petite_discussion", feedback: "", vibe: "", scoreDelta: 0 },
+      { label: "Non, je ne réponds pas", next: "Bonne_fin_Rapide", feedback: "", vibe: "", scoreDelta: 2 }
+    ]
+  },
+
+  petite_discussion: {
+    step: 2,
+    title: "Premier contact",
+    text:
+      "La personne est sympa et te complimente :\n" +
+      "« Toi au moins tu réfléchis, pas comme les autres. »\n\n" +
+      "Puis elle ajoute : « Snap, c’est nul. Viens sur Telegram. »",
+    choices: [
+      { label: "J’accepte", next: "Isolement", feedback: "", vibe: "", scoreDelta: -1 },
+      { label: "Je refuse", next: "Méfiance", feedback: "", vibe: "", scoreDelta: 1 }
+    ]
+  },
+
+  Isolement: {
+    step: 3,
+    title: "Isolement",
+    text:
+      "Sur Telegram, la personne dit :\n" +
+      "«Ne parle de moi à personne, eux ne te comprennent pas. Moi oui»\n\n" +
+      "Que décides-tu de faire ?",
+    choices: [
+      { label: "Je garde le secret", next: "Invitation_de_groupe", feedback: "", vibe: "", scoreDelta: -2 },
+      { label: "J’en parle à quelqu’un", next: "discussion_parent", feedback: "", vibe: "", scoreDelta: 2 }
+    ]
+  },
+
+  Invitation_de_groupe: {
+    step: 4,
+    title: "Le groupe",
+    text:
+      "Tu es ajouté à un groupe.\n" +
+      "Les gens postent des messages très violents et haineux.\n" +
+      "Tu demandes pourquoi et on te dit : « Ici, on dit la vérité.»\n" +
+      "Que fais tu",
+    choices: [
+      { label: "Je reste", next: "Pression", feedback: "", vibe: "", scoreDelta: -1 },
+      { label: "Je quitte", next: "discussion_parent", feedback: "", vibe: "", scoreDelta: 2 }
+    ]
+  },
+
+  Méfiance: {
+    step: 4,
+    title: "Les infos",
+    text:
+      "La personne envoie des infos choquantes.\n" +
+      "Elle te dit : « Partage, les gens doivent savoir. »",
+    choices: [
+      { label: "Je partage", next: "Fin_mauvaise_info", feedback: "", vibe: "", scoreDelta: -2 },
+      { label: "Je ne partage pas", next: "Pression", feedback: "", vibe: "", scoreDelta: 0 }
+    ]
+  },
+
+  Pression: {
+    step: 5,
+    title: "Pression",
+    text:
+      "La personne insiste :\n" +
+      "«Fais-le maintenant, si tu hésites. C’est que tu es contre nous.»\n\n" +
+      "Que fais-tu ?",
+    choices: [
+      { label: "Je continue", next: "Requette_incensée", feedback: "", vibe: "", scoreDelta: -2 },
+      { label: "Je coupe", next: "discussion_parent", feedback: "", vibe: "", scoreDelta: 2 }
+    ]
+  },
+
+  Requette_incensée: {
+    step: 6,
+    title: "La demande",
+    text:
+      "On te demande de faire quelque chose de pas normal.\n" +
+      "On te dit : harcèle quelqu’un pour prouver que tu es de notre côté\n" +
+      "Que fais-tu ?",
+    choices: [
+      { label: "J’accepte", next: "Fin_pression", feedback: "", vibe: "", scoreDelta: -2 },
+      { label: "Je refuse", next: "Sortie", feedback: "", vibe: "", scoreDelta: 1 }
+    ]
+  },
+
+  Sortie: {
+    step: 7,
+    title: "Sortie",
+    text:
+      "Tu refuses. La personne insiste et te menace.",
+    choices: [
+      { label: "Je bloque", next: "Bonne_fin", feedback: "", vibe: "", scoreDelta: 2 },
+      { label: "Je continue à répondre, après tout. Je suis de leur côté", next: "Fin_neutre", feedback: "", vibe: "", scoreDelta: 0 }
+    ]
+  },
+
+  discussion_parent: {
+    step: 8,
+    title: "Bonne fin",
+    text:
+      "Tu montres les messages à un adulte de confiance.\n" +
+      "On t'explique ce qu’est la radicalisation, et comment t'en protéger\n" +
+      "Avec le temps, tu avances et tu passes à autre chose.",
+    choices: [
+      { label: "Continuer", next: "Scene_explication", feedback: "", vibe: "", scoreDelta: 0 }
+    ]
+  },
+
+  Bonne_fin_Rapide: {
+    step: 9,
+    title: "Excellente fin",
+    text:
+      "Tu as ignoré dès le début.\n\n" +
+      "Tu as évité le piège sans même entrer dedans.",
+    choices: [
+      { label: "Continuer", next: "Scene_explication", feedback: "", vibe: "", scoreDelta: 0 }
+    ]
+  },
+
+  Bonne_fin: {
+    step: 9,
+    title: "Remise_en_question",
+    text:
+      "Tu t’es fait approcher, tu es allé un peu loin… mais tu as réussi à sortir.\n\n" +
+      "Maintenant tu comprends comment ça marche : flatterie, isolement, pression, puis requêtes insensées.",
+    choices: [
+      { label: "Continuer", next: "Scene_explication", feedback: "", vibe: "", scoreDelta: 0 }
+    ]
+  },
+
+  Fin_neutre: {
+    step: 9,
+    title: "Fin neutre :/",
+    text:
+      "Tu n’as jamais vraiment coupé.\n\n" +
+      "Tu restes malléable et manipulable, tu n'en sais pas plus qu’au début.",
+    choices: [
+      { label: "Continuer", next: "Scene_explication", feedback: "", vibe: "", scoreDelta: 0 }
+    ]
+  },
+
+  Fin_mauvaise_info: {
+    step: 9,
+    title: "Très mauvaise fin",
+    text:
+      "Tu as partagé sans vérifier.\n\n" +
+      "Tu as aidé une manipulation sans même y penser",
+    choices: [
+      { label: "Continuer", next: "Scene_explication", feedback: "", vibe: "", scoreDelta: 0 }
+    ]
+  },
+
+  Fin_pression: {
+    step: 9,
+    title: "Mauvaise fin",
+    text:
+      "Tu as accepté sous pression.\n\n" +
+      "Les choix ne t'appartiennent plus, ton destin n’est plus le tien.",
+    choices: [
+      { label: "Continuer", next: "Scene_explication", feedback: "", vibe: "", scoreDelta: 0 }
+    ]
+  },
+    
+  Scene_explication: {
+    step: 10,
+    title: "Conclusion et fin du jeu",
+    text:
+      "Dans ce jeu interactif, on montre à la personne ce qu’est la radicalisation, ce qu’elle peut provoquer et quels choix ne pas faire. Les victimes de la radicalisation ne sont pas seulement la personne manipulée mais aussi les proches de ces personnes, faites attention aux gens autour de vous, on ne sait jamais dans quel genre de situation ils peuvent se mettre.\n\n" +
+      "Merci d'avoir joué :D",
+    choices: []
+  }
+}
+
+
+
+
+let state = { sceneId: "start", score: 0, history: [] };
+
+const elTitle = document.getElementById("title");
+const elText = document.getElementById("text");
+const elDesc = document.getElementById("desc");
+const elChoices = document.getElementById("choices");
+const elFeedback = document.getElementById("feedback");
+const elBar = document.getElementById("bar");
+const elNodePill = document.getElementById("nodePill");
+const elStepPill = document.getElementById("stepPill");
+const elScorePill = document.getElementById("scorePill");
+const elHint = document.getElementById("hint");
+const restartBtn = document.getElementById("restartBtn");
+const backBtn = document.getElementById("backBtn");
+
+function clampScore(x){
+  // optionnel : évite que le score devienne très négatif
+  if(x > 20) return 20;
+  if(x < -10) return -10;
+  return x;
+}
+
+function setFeedback(text, vibe){
+  if(!text){
+    elFeedback.style.display="none";
+    elFeedback.textContent="";
+    elFeedback.className="feedback";
+    return;
+  }
+  elFeedback.style.display="block";
+  elFeedback.textContent=text;
+  elFeedback.className = "feedback " + (vibe || "");
+}
+
+function render(){
+  const scene = scenes[state.sceneId];
+  if(!scene){
+    // sécurité au cas où
+    state.sceneId = "start";
+    return render();
+  }
+
+  elTitle.textContent = scene.title;
+  elText.textContent = scene.text;
+
+  if(scene.desc){
+    elDesc.style.display = "block";
+    elDesc.textContent = scene.desc;
+  } else {
+    elDesc.style.display = "none";
+    elDesc.textContent = "";
+  }
+
+  elNodePill.textContent = `Scène : ${state.sceneId}`;
+  elStepPill.textContent = `Étape ${scene.step}/${TOTAL_STEPS}`;
+  elScorePill.textContent = `Vigilance : ${state.score}`;
+
+  const pct = Math.round((scene.step-1) / (TOTAL_STEPS-1) * 100);
+  elBar.style.width = `${pct}%`;
+
+  const isQuestion = scene.choices && scene.choices.length > 0;
+
+  elChoices.innerHTML = "";
+
+  backBtn.disabled = (state.history.length === 0);
+  backBtn.style.opacity = backBtn.disabled ? 0.5 : 1;
+  backBtn.style.cursor = backBtn.disabled ? "not-allowed" : "pointer";
+
+  if(!isQuestion){
+    elHint.textContent = "Conclusion. Tu peux recommencer ou revenir en arrière.";
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.innerHTML = `<span class="badge">↺</span><span>Recommencer</span>`;
+    btn.onclick = reset;
+    elChoices.appendChild(btn);
+    return;
+  }
+
+  elHint.textContent = "Choisis une option pour continuer.";
+
+  scene.choices.forEach((c, i) => {
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.innerHTML = `<span class="badge">${String.fromCharCode(65+i)}</span><span>${c.label}</span>`;
+    btn.onclick = () => choose(c);
+    elChoices.appendChild(btn);
+  });
+}
+
+function choose(choice){
+  state.history.push({ sceneId: state.sceneId, score: state.score });
+
+  const delta = choice.scoreDelta || 0;
+  state.score = clampScore(state.score + delta);
+
+  setFeedback(choice.feedback || "", choice.vibe || "");
+  state.sceneId = choice.next;
+  render();
+}
+
+function reset(){
+  state.sceneId = "start";
+  state.score = 0;
+  state.history = [];
+  setFeedback("", "");
+  render();
+}
+
+function back(){
+  if(state.history.length === 0) return;
+  const prev = state.history.pop();
+  state.sceneId = prev.sceneId;
+  state.score = prev.score;
+  setFeedback("", "");
+  render();
+}
+
+restartBtn.addEventListener("click", reset);
+backBtn.addEventListener("click", back);
+
+reset();
+</script>
+</body>
+</html>
